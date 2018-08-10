@@ -1,51 +1,65 @@
 import React from 'react';
-import { broadcast } from '../utils/play'
+import generatePage from './generate';
 
-class FirstPage extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            startAt: 0,
-            currentTime: 0,
-        }
-    }
-    componentDidMount() {
-        const { welcomeVoice } = this.props
-        const { sourceNode } = welcomeVoice
-        const { buffer } = sourceNode
-        console.log('first-buffer', buffer)
-        if (buffer) {
-            console.log('已经是在播放')
-        } else {
-            console.log('尚未启动播放')
-            // 启动播放
-            const voiceBuffer = this.props.source.buffer
-            // eslint-disable-next-line
-            if (typeof WeixinJSBridge === "object" && typeof WeixinJSBridge.invoke == "function") {
-                // 检测是否微信浏览器
-                // eslint-disable-next-line
-                WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
-                    // 触发一下play事件
-                    broadcast(voiceBuffer)
-                });
-            }   else {
-                try {
-                broadcast(voiceBuffer)
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-        }
-    }
+class Page extends React.Component {
     render() {
         return (
-            <div >
-                这里是第一个页面
+            <div>
+                <div>这是第一页</div>
+                <div id="goToSecond" >点击我去第二页</div>
             </div>
         )
     }
 }
 
-// const Page = BroadcastHoc(FirstPage)
+// class FirstPage extends React.Component {
+//     constructor(props) {
+//         super(props)
+//         this.state = {
+//             interVal: null
+//         }
+//         this.setLouderInterval = this.setLouderInterval.bind(this)
+//         this.clearLouderInterval = this.clearLouderInterval.bind(this)
+//     }
+//     setLouderInterval() {
+//         const self = this
+//         const { welcomeVoice } = this.props
+//         let times = 0
+//         const interVal = setInterval(() => {
+//             if (times <= 3) {
+//                 times += 1
+//                 welcomeVoice.louder() 
+//             } else {
+//                 self.clearLouderInterval()
+//             }
+//         }, 1000)
+//         this.setState({
+//             interVal
+//         })
+//     }
+//     clearLouderInterval() {
+//         const { interVal } = this.state
+//         clearInterval(interVal)
+//     }
+//     componentDidMount() {
+//         this.setLouderInterval()
+//     }
+//     componentWillUnmount() {
+//         const { welcomeVoice } = this.props
+//         console.log("unmount")
+//         this.clearLouderInterval()
+//         welcomeVoice.stop()
+//     }
+//     render() {
+//         return(
+//             <div>
+//                 <div>这是第一页</div>
+//                 <div id="goToSecond" >点击我去第二页</div>
+//             </div>
+//         )
+//     }
+// }
+
+const FirstPage = generatePage(Page)
 
 export default FirstPage

@@ -1,15 +1,15 @@
 import React from 'react';
 import { connect } from 'dva'
-// import fetch from 'dva/fetch'
+import fetch from 'dva/fetch'
 // pages
 import FirstPage from '../components/First';
+import SecondPage from '../components/Second';
 import Welcome from '../components/Welcome';
 // files
 import audio from '../assets/woman.mp3'
+import live from '../assets/live.mp3'
 // utils
-import judger from '../utils/judger'
-import play from '../utils/play';
-import getVoice from '../utils/getVoice'
+import Broadcast from '../utils/broadcast';
 
 // eslint-disable-next-line
 import Vconsole from 'vconsole'
@@ -27,51 +27,39 @@ class IndexPage extends React.Component {
       routeToComponents: {
         welcome: Welcome,
         firstpage: FirstPage,
+        secondpage: SecondPage,
       },
-      welcomeVoice: ''
+      welcomeVoice: null,
+      liveVoice: null
     }
     this.goToFirstPage = this.goToFirstPage.bind(this)
-    this.goToFirstPageAuto = this.goToFirstPageAuto.bind(this)
+    this.goToSecondPage = this.goToSecondPage.bind(this)
   }
   componentDidMount() {
-    const { dispatch } = this.props
     const self = this
-    // 处理fetch回来后的buffer获取的函数
-    const bufferHandler = (buffer) => {
-      // save to redux
-      dispatch({ type: 'source/saveBuffer', payload: buffer})
-      // 解码并初始化音频信息
-      const welcomeVoice = play(buffer, 'goToFirst', (audioInfo) => {
-        // broadcasthandler
-        // 音频播放后的处理
-        self.setState({
-          // 更新音频信息
-          welcome: audioInfo,
-        }, () => {
-          // 跳转页面
-          self.goToFirstPage()
+    fetch(audio)
+      .then(res => res.arrayBuffer())
+      .then((buffer) => {
+          const broadcastor = new Broadcast(buffer,
+              'goToFirst',
+              () => { self.goToFirstPage() },
+              () => { self.setState({ welcomeVoice: broadcastor })
+            })
+          return broadcastor
         })
+      // .then((broadcastor => self.setState({ welcomeVoice: broadcastor })))
+    fetch(live)
+      .then(res => res.arrayBuffer())
+      .then((buffer) => {
+        const broadcastor = new Broadcast(buffer,
+            'goToSecond',
+            () => { self.goToSecondPage() },
+            () => { self.setState({ liveVoice: broadcastor })
+          })
+        return broadcastor
       })
-      // 首次初始化后，用state记录音频信息
-      self.setState({
-        welcomeVoice,
-      }, () => {
-        // auto go to next page
-        self.goToFirstPageAuto()
-      })
-    }
-    // 获取声音并处理buffer
-    getVoice(audio, bufferHandler)
-  }
-  // auto go to first page after loading
-  goToFirstPageAuto() {
-    // 判断是否微信浏览器，是则自动跳转
-    const isWeixin = judger.judgeIsWeixin()
-    const isAndroid = judger.judgeIsAndroid()
-    // 微信或安卓浏览器就自动跳转
-    if (isWeixin || isAndroid) {
-      this.goToFirstPage()
-    }
+      // .then(buffer => new Broadcast(buffer, 'goToSecond', () => { self.goToSecondPage() }))
+      // .then(broadcastor => self.setState({ liveVoice: broadcastor }))
   }
   // go to first page
   goToFirstPage() {
@@ -79,20 +67,22 @@ class IndexPage extends React.Component {
       route: 'firstpage'
     })
   }
+  goToSecondPage() {
+    this.setState({
+      route: 'secondpage'
+    })
+  }
   render() {
-    const { route, routeToComponents, welcomeVoice } = this.state;
+    const { route, routeToComponents, welcomeVoice, liveVoice  } = this.state;
+    const { goToSecondPage } = this
     const Com = routeToComponents[route];
-    const isAndroid = judger.judgeIsAndroid()
-    const isWeixin = judger.judgeIsWeixin()
-    // 非微信且非安卓浏览器则认定为其他浏览器
-    const isOtherBrowser = !isAndroid && !isWeixin
     return (
       <div>
         <Com
           {...this.props}
-          goToFirstPage={this.goToFirstPage}
-          isOtherBrowser={isOtherBrowser}
+          goToSecondPage={goToSecondPage}
           welcomeVoice={welcomeVoice}
+          liveVoice={liveVoice}
         />
       </div>
     )
