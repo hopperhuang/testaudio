@@ -40,16 +40,18 @@ class Preload extends React.Component {
         request.responseType = 'arraybuffer';
         request.onload = function () {
             ctx.decodeAudioData(request.response, (buffer) => {
-                const btn = document.getElementById('clickButton');
+                console.log(request.response)
+                // const btn = document.getElementById('clickButton');
                 // btn.addEventListener('click',  () => {
                 //     console.log(233333)
                 //     playBuffer(buffer)
                 // })
                 // btn.click()
-                // window.addEventListener('click', () => {
-                //     console.log(233333)
-                //     playBuffer(buffer)
-                // })
+                window.addEventListener('click', () => {
+                    console.log(233333)
+                    console.log(buffer)
+                    playBuffer(buffer)
+                })
                 // window.dispatchEvent('click')
             }, (err) => {
                 console.log(err)

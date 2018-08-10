@@ -4,7 +4,7 @@ export default {
     namespace: 'source',
   
     state: {
-        name: 'source'
+        buffer: null
     },
   
     subscriptions: {
@@ -20,12 +20,12 @@ export default {
   
     reducers: {
       save(state, action) {
-        console.log('bbbd')
-        return { name: 'abc' };
+        state.name = 12222
       },
       saveBuffer(state, action) {
-        console.log(action)
-        return { name: 2333 }
+        const buffer = action.payload
+        // console.log(buffer)
+        state.buffer = buffer
       }
     },
   
