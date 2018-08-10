@@ -1,4 +1,4 @@
-
+import judeger from './judger'
 
 /**
  * 返回音频信息
@@ -13,28 +13,37 @@ export function handleVoice(buffer, id, broadcasthandler) {
     let sourceNode
     const defaultBroadcastHandlr = (sourceNode) => console.log('paly:', sourceNode)
     const handleBroadCast = broadcasthandler || defaultBroadcastHandlr
+    // 创建sourcenode
     sourceNode = ctx.createBufferSource()
+    // 添加buffer并将sourcenode 链接到播放接口
     const playBuffer = (buff) => {
         sourceNode.buffer = buff;
         sourceNode.connect(ctx.destination)
         sourceNode.start(0); 
     }
-    ctx.decodeAudioData(buffer, function (buff) {
-      window.addEventListener('click', (e) => {
-          if (id) {
-              // broadcast according to what you've click
-              if(e.target.id === id) {
-                // braodcast
-                playBuffer(buff)
-                // handle sourcNode here
-                handleBroadCast(ctx)
-              }
-          } else {
-              playBuffer(buff)
-              handleBroadCast(ctx)
-          }
-      })
-    })
+    const isAndroid = judeger.judgeIsAndroid()
+    const isWeixin = judeger.judgeIsWeixin()
+    const isOther = !isAndroid && !isWeixin
+    if (isOther) {
+        ctx.decodeAudioData(buffer, function (buff) {
+            window.addEventListener('click', (e) => {
+                if (id) {
+                    // broadcast according to what you've click
+                    if(e.target.id === id) {
+                      // braodcast
+                      playBuffer(buff)
+                      // handle sourcNode here
+                      handleBroadCast(ctx)
+                    }
+                } else {
+                    playBuffer(buff)
+                    handleBroadCast(ctx)
+                }
+            })
+          }, (err) => {
+              console.log('err_docde', err)
+          })
+    }
     return { context: ctx, sourceNode }
 }
 
@@ -43,7 +52,7 @@ export function broadcast(voiceBuffer) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const ctx = new AudioContext()
         const srn = ctx.createBufferSource()
-        ctx.decodeAudioData(voiceBuffer.slice(0), (buff) => {
+        ctx.decodeAudioData(voiceBuffer, (buff) => {
             try {
                 srn.buffer = buff;
                 srn.connect(ctx.destination)
@@ -55,8 +64,8 @@ export function broadcast(voiceBuffer) {
             //     console.log(context.currentTime)
             // }, 1000)
         }, (err) => {
-            console.log(2333)
-            console.log(err)
+            console.log('-----')
+            console.log('err_code', err)
         })
     } catch (error) {
         console.log(error)

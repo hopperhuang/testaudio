@@ -20,21 +20,21 @@ class FirstPage extends React.Component {
             console.log('尚未启动播放')
             // 启动播放
             const voiceBuffer = this.props.source.buffer
-            // 定义play方法
-            // if (typeof WeixinJSBridge === "object" && typeof WeixinJSBridge.invoke == "function") {
-            //     // 检测是否微信浏览器
-            //     // eslint-disable-next-line
-            //     WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
-            //         // 触发一下play事件
-            //         play();
-            //     });
-            // }   else {
-            //     try {
+            // eslint-disable-next-line
+            if (typeof WeixinJSBridge === "object" && typeof WeixinJSBridge.invoke == "function") {
+                // 检测是否微信浏览器
+                // eslint-disable-next-line
+                WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
+                    // 触发一下play事件
+                    broadcast(voiceBuffer)
+                });
+            }   else {
+                try {
                 broadcast(voiceBuffer)
-                // } catch (error) {
-                //     console.log(error)
-                // }
-            // }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
         }
     }
     render() {
