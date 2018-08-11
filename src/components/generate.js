@@ -1,6 +1,10 @@
 import React from 'react'
 
 function generatePage(Com) {
+    /**
+     * Page 组件加载前，请取保braodacast播放器属性已经存在
+     * 否则事件同步会有问题
+     */
     return class Page extends React.Component {
         constructor(props) {
             super(props)

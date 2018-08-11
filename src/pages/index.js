@@ -73,21 +73,31 @@ class IndexPage extends React.Component {
     })
   }
   render() {
+    console.log("rendered")
     const { route, routeToComponents, welcomeVoice, liveVoice  } = this.state;
     const Com = routeToComponents[route];
     let music
+    let resouceLoaded
+    // 设置music属性
     if (route === 'firstpage') {
       music = this.state.welcomeVoice
     } else if (route === 'secondpage') {
       music = this.state.liveVoice
+    }
+    // 设置 资源属性
+    if (route === 'welcome') {
+      resouceLoaded = !!welcomeVoice && !!liveVoice
+    } else if (route === 'firstpage') {
+      resouceLoaded = !!welcomeVoice
+    } else if (route === 'secondpage') {
+      resouceLoaded = !!liveVoice
     }
     return (
       <div>
         <Com
           {...this.props}
           music={music}
-          welcomeVoice={welcomeVoice}
-          liveVoice={liveVoice}
+          resouceLoaded={resouceLoaded}
         />
       </div>
     )
