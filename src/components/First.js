@@ -12,54 +12,6 @@ class Page extends React.Component {
     }
 }
 
-// class FirstPage extends React.Component {
-//     constructor(props) {
-//         super(props)
-//         this.state = {
-//             interVal: null
-//         }
-//         this.setLouderInterval = this.setLouderInterval.bind(this)
-//         this.clearLouderInterval = this.clearLouderInterval.bind(this)
-//     }
-//     setLouderInterval() {
-//         const self = this
-//         const { welcomeVoice } = this.props
-//         let times = 0
-//         const interVal = setInterval(() => {
-//             if (times <= 3) {
-//                 times += 1
-//                 welcomeVoice.louder() 
-//             } else {
-//                 self.clearLouderInterval()
-//             }
-//         }, 1000)
-//         this.setState({
-//             interVal
-//         })
-//     }
-//     clearLouderInterval() {
-//         const { interVal } = this.state
-//         clearInterval(interVal)
-//     }
-//     componentDidMount() {
-//         this.setLouderInterval()
-//     }
-//     componentWillUnmount() {
-//         const { welcomeVoice } = this.props
-//         console.log("unmount")
-//         this.clearLouderInterval()
-//         welcomeVoice.stop()
-//     }
-//     render() {
-//         return(
-//             <div>
-//                 <div>这是第一页</div>
-//                 <div id="goToSecond" >点击我去第二页</div>
-//             </div>
-//         )
-//     }
-// }
-
 const FirstPage = generatePage(Page)
 
 export default FirstPage

@@ -74,13 +74,18 @@ class IndexPage extends React.Component {
   }
   render() {
     const { route, routeToComponents, welcomeVoice, liveVoice  } = this.state;
-    const { goToSecondPage } = this
     const Com = routeToComponents[route];
+    let music
+    if (route === 'firstpage') {
+      music = this.state.welcomeVoice
+    } else if (route === 'secondpage') {
+      music = this.state.liveVoice
+    }
     return (
       <div>
         <Com
           {...this.props}
-          goToSecondPage={goToSecondPage}
+          music={music}
           welcomeVoice={welcomeVoice}
           liveVoice={liveVoice}
         />

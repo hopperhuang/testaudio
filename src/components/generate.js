@@ -5,39 +5,40 @@ function generatePage(Com) {
         constructor(props) {
             super(props)
             this.state = {
-                interVal: null
+                voiceLouderInterVal: null
             }
             this.setLouderInterval = this.setLouderInterval.bind(this)
             this.clearLouderInterval = this.clearLouderInterval.bind(this)
         }
         setLouderInterval() {
             const self = this
-            const { welcomeVoice } = this.props
+            const { music } = this.props
             let times = 0
             const interVal = setInterval(() => {
                 if (times <= 3) {
                     times += 1
-                    welcomeVoice.louder() 
+                    music.louder() 
                 } else {
                     self.clearLouderInterval()
                 }
             }, 1000)
             this.setState({
-                interVal
+                voiceLouderInterVal: interVal
             })
         }
         clearLouderInterval() {
-            const { interVal } = this.state
-            clearInterval(interVal)
+            const { voiceLouderInterVal } = this.state
+            clearInterval(voiceLouderInterVal)
         }
         componentDidMount() {
             this.setLouderInterval()
+            console.log(this.props.music.startTime)
         }
         componentWillUnmount() {
-            const { welcomeVoice } = this.props
+            const { music } = this.props
             console.log("unmount")
             this.clearLouderInterval()
-            welcomeVoice.stop()
+            music.stop()
         }
         render() {
             return(
